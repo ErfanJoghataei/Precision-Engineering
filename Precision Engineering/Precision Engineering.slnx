@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Precision Engineering.Api/Precision Engineering.Api.csproj" />
+  <Project Path="Precision Engineering.DAL/Precision Engineering.DAL.csproj" />
+</Solution>
