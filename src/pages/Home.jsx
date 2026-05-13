@@ -1,5 +1,5 @@
 import React from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Clock, FileText, Mail, MapPin, Phone } from "lucide-react";
 import { blogPosts, downloads, projects } from "../data/content.js";
 
@@ -16,6 +16,14 @@ const categoryName = (category) =>
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [contactForm, setContactForm] = useState({
+    fullName: "",
+    email: "",
+    messageText: ""
+  });
+  const [contactErrors, setContactErrors] = useState({});
+  const [contactStatus, setContactStatus] = useState({ type: "", message: "" });
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const filteredProjects = useMemo(
     () =>
       activeCategory === "all"
@@ -23,6 +31,86 @@ export default function Home() {
         : projects.filter((project) => project.category === activeCategory),
     [activeCategory]
   );
+
+  useEffect(() => {
+    if (!contactStatus.message) return undefined;
+
+    const timerId = window.setTimeout(() => {
+      setContactStatus({ type: "", message: "" });
+    }, 5000);
+
+    return () => window.clearTimeout(timerId);
+  }, [contactStatus.message]);
+
+  const validateContactForm = () => {
+    const errors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const fullName = contactForm.fullName.trim();
+    const email = contactForm.email.trim();
+    const messageText = contactForm.messageText.trim();
+
+    if (!fullName) errors.fullName = "Full name is required.";
+    else if (fullName.length > 100) errors.fullName = "Full name must be 100 characters or less.";
+
+    if (!email) errors.email = "Email address is required.";
+    else if (!emailPattern.test(email)) errors.email = "Enter a valid email address.";
+    else if (email.length > 150) errors.email = "Email address must be 150 characters or less.";
+
+    if (!messageText) errors.messageText = "Message is required.";
+    else if (messageText.length > 1000) errors.messageText = "Message must be 1000 characters or less.";
+
+    return errors;
+  };
+
+  const updateContactField = (event) => {
+    const { name, value } = event.target;
+    setContactForm((current) => ({ ...current, [name]: value }));
+    setContactErrors((current) => ({ ...current, [name]: "" }));
+    setContactStatus({ type: "", message: "" });
+  };
+
+  const submitContactForm = async (event) => {
+    event.preventDefault();
+
+    const errors = validateContactForm();
+    setContactErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setContactStatus({ type: "error", message: "Please fix the highlighted fields." });
+      return;
+    }
+
+    setIsSendingMessage(true);
+    setContactStatus({ type: "", message: "" });
+
+    try {
+      const response = await fetch("/api/Contact/Send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          FullName: contactForm.fullName.trim(),
+          Email: contactForm.email.trim(),
+          MessageText: contactForm.messageText.trim()
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.message || "Message could not be sent.");
+      }
+
+      setContactForm({ fullName: "", email: "", messageText: "" });
+      setContactErrors({});
+      setContactStatus({ type: "success", message: result.message || "Your message has been sent." });
+    } catch (error) {
+      setContactStatus({
+        type: "error",
+        message: error.message || "Something went wrong. Please try again."
+      });
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
 
   return (
     <>
@@ -130,20 +218,60 @@ export default function Home() {
           <h2 className="section-title">Get in Touch</h2>
           <p className="section-subtitle">Let's discuss how we can help with your next project</p>
           <div className="contact-wrapper">
-            <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
+            <form className="contact-form" onSubmit={submitContactForm} noValidate>
               <div className="form-group">
-                <label htmlFor="name">Full Name</label>
-                <input type="text" id="name" name="name" required />
+                <label htmlFor="fullName">Full Name</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={contactForm.fullName}
+                  onChange={updateContactField}
+                  maxLength="100"
+                  aria-invalid={Boolean(contactErrors.fullName)}
+                  aria-describedby={contactErrors.fullName ? "fullName-error" : undefined}
+                  required
+                />
+                {contactErrors.fullName ? <span className="form-error" id="fullName-error">{contactErrors.fullName}</span> : null}
               </div>
               <div className="form-group">
                 <label htmlFor="email">Email Address</label>
-                <input type="email" id="email" name="email" required />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={contactForm.email}
+                  onChange={updateContactField}
+                  maxLength="150"
+                  aria-invalid={Boolean(contactErrors.email)}
+                  aria-describedby={contactErrors.email ? "email-error" : undefined}
+                  required
+                />
+                {contactErrors.email ? <span className="form-error" id="email-error">{contactErrors.email}</span> : null}
               </div>
               <div className="form-group">
                 <label htmlFor="message">Message</label>
-                <textarea id="message" name="message" rows="6" required />
+                <textarea
+                  id="message"
+                  name="messageText"
+                  rows="6"
+                  value={contactForm.messageText}
+                  onChange={updateContactField}
+                  maxLength="1000"
+                  aria-invalid={Boolean(contactErrors.messageText)}
+                  aria-describedby={contactErrors.messageText ? "message-error" : undefined}
+                  required
+                />
+                {contactErrors.messageText ? <span className="form-error" id="message-error">{contactErrors.messageText}</span> : null}
               </div>
-              <button type="submit" className="btn btn-primary">Send Message</button>
+              <button type="submit" className="btn btn-primary" disabled={isSendingMessage}>
+                {isSendingMessage ? "Sending..." : "Send Message"}
+              </button>
+              {contactStatus.message ? (
+                <div className={`form-status ${contactStatus.type}`} role="status" aria-live="polite">
+                  {contactStatus.message}
+                </div>
+              ) : null}
             </form>
 
             <div className="contact-info">
