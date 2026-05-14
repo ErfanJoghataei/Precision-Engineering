@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Precision Engineering.BusinessLogic\Precision Engineering.BusinessLogic.csproj" />
     <ProjectReference Include="..\Precision Engineering.DAL\Precision Engineering.DAL.csproj" />
   </ItemGroup>
 

@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Precision_Engineering.Api.Dtos.MessageDtos;
 using Precision_Engineering.DAL.Contexts;
 using Precision_Engineering.DAL.Entities;
-using System.Data.Common;
 
 namespace Precision_Engineering.Api.Controllers
 {
