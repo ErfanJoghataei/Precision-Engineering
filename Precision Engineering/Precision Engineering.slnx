@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="Precision Engineering.Api/Precision Engineering.Api.csproj" />
-  <Project Path="Precision Engineering.BusinessLogic/Precision Engineering.BusinessLogic.csproj" Id="20694fb8-191c-4df3-9888-e5de81707e05" />
+  <Project Path="Precision Engineering.BusinessLogic/Precision Engineering.BLL.csproj" Id="20694fb8-191c-4df3-9888-e5de81707e05" />
   <Project Path="Precision Engineering.DAL/Precision Engineering.DAL.csproj" />
 </Solution>
