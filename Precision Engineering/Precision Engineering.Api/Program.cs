@@ -1,5 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Precision_Engineering.BusinessLogic.Insight;
+using Precision_Engineering.BusinessLogic.Jwt_Token;
 using Precision_Engineering.DAL.Contexts;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +15,36 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 var cnnstring = builder.Configuration.GetConnectionString("cnnstring");
 builder.Services.AddDbContext<PrecisionEngineeringDbContext>(option => option.UseSqlServer(cnnstring));
+
+builder.Services.AddScoped<IInsightsServise,InsightsServise>();
+builder.Services.AddScoped<IJwtServise, JwtServise>();
+
+var jwtsetting = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtsetting.Key);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = jwtsetting["Issuer"],
+        ValidAudience = jwtsetting["Audience"],
+        IssuerSigningKey =
+                        new SymmetricSecurityKey(key)
+    };
+
+});
+
+
+builder.Services.AddAuthorization();
+
+
+
+
 
 var app = builder.Build();
 
@@ -24,5 +59,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

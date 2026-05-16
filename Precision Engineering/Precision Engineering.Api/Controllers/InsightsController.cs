@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using Precision_Engineering.Api.Dtos.InsightsDtos;
 using Precision_Engineering.BusinessLogic.Insight;
+using Precision_Engineering.DAL.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -20,27 +22,34 @@ namespace Precision_Engineering.Api.Controllers
         }
 
         [HttpPost("Create")]
-        [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> CreateInsight(CreateInsightDto dto)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
-            var fileextention = Path.GetExtension(dto.InsightImage.FileName);
+            var fileextention = Path.GetExtension(dto.InsightImage.FileName).ToLowerInvariant();
             if (!allowedExtensions.Contains(fileextention))
             {
-                return BadRequest("Invalid ImageFormat");
+                return BadRequest(new
+                {
+                    message = "Invalid ImageFormat"
+                });
+
             }
             if (dto.InsightImage.Length > 5 * 1024 * 1024)
             {
-                return BadRequest("Image Size Must Be Less Than 5 MB.");
+
             }
-            var issuccsec = await insightsServise.CreateInsight(dto.Title,dto.Description,dto.InsightImage,dto.ReadTimeInMinutes,dto.Category);
-            if(issuccsec)
+            var issuccsec = await insightsServise.CreateInsight(dto.Title, dto.Description, dto.InsightImage, dto.ReadTimeInMinutes, dto.Category);
+            if (!issuccsec)
             {
-                return Ok("insight created successfuly");
+                return StatusCode(500, new { message = "Something went wrong" });
             }
-            return StatusCode(500, new { message = "Something went wrong"});
+            return Ok(new
+            {
+                message = "Insight created successfuly"
+            });
         }
+
 
     }
 }
