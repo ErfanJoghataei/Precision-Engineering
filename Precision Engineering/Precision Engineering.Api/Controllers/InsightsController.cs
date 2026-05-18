@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Precision_Engineering.Api.Dtos.InsightsDtos;
-using Precision_Engineering.BusinessLogic.Insight;
+using Precision_Engineering.Bll.Insight;
 using Precision_Engineering.DAL.Entities;
-using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -22,7 +21,7 @@ namespace Precision_Engineering.Api.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateInsight(CreateInsightDto dto)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
@@ -49,6 +48,26 @@ namespace Precision_Engineering.Api.Controllers
                 message = "Insight created successfuly"
             });
         }
+
+        [HttpDelete("id")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveInsight(int id)
+        {
+            if (!insightsServise.RemoveInsightById(id))
+            {
+                return StatusCode(500, new
+                {
+                    message = "Something went wrong"
+                });
+            }
+            return Ok(new
+            {
+                message = $"Insight with id : {id} removed successfuly"
+            });
+        }
+
+
+
 
 
     }
