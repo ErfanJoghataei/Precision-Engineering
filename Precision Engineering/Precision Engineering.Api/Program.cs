@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Precision_Engineering.Bll.Insight;
 using Precision_Engineering.Bll.Jwt_Token;
+using Precision_Engineering.BusinessLogic.FIle;
+using Precision_Engineering.BusinessLogic.Project;
 using Precision_Engineering.DAL.Contexts;
 using System.Text;
 
@@ -18,6 +20,8 @@ builder.Services.AddDbContext<PrecisionEngineeringDbContext>(option => option.Us
 
 builder.Services.AddScoped<IInsightsServise,InsightsServise>();
 builder.Services.AddScoped<IJwtServise, JwtServise>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 var jwtsetting = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtsetting.Key);

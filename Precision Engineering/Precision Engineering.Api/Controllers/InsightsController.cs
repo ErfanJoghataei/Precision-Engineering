@@ -20,25 +20,22 @@ namespace Precision_Engineering.Api.Controllers
             this.insightsServise = insightsServise;
         }
 
-        [HttpPost("Create")]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateInsight(CreateInsightDto dto)
+        public async Task<IActionResult> Create(CreateInsightDto dto)
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
-            var fileExtension = Path.GetExtension(dto.InsightImage.FileName).ToLowerInvariant();
-            if (!allowedExtensions.Contains(fileExtension))
-            {
-                return BadRequest(new
-                {
-                    message = "Invalid ImageFormat"
-                });
-
-            }
-            if (dto.InsightImage.Length > 5 * 1024 * 1024)
+            if (!CheckIamgeSize(dto.InsightImage))
             {
                 return BadRequest(new
                 {
                     message = "Image size must be less than 5 MB"
+                });
+            }
+            if(!CheckIamgeformat(dto.InsightImage))
+            {
+                return BadRequest(new
+                {
+                    message = "Iamge format is not valid"
                 });
             }
             var issuccsec = await insightsServise.CreateInsight(dto.Title, dto.Description, dto.InsightImage, dto.ReadTimeInMinutes, dto.Category);
@@ -52,9 +49,9 @@ namespace Precision_Engineering.Api.Controllers
             });
         }
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemoveInsight(int id)
+        public async Task<IActionResult> Remove(int id)
         {
             if (!insightsServise.RemoveInsightById(id))
             {
@@ -69,9 +66,9 @@ namespace Precision_Engineering.Api.Controllers
             });
         }
 
-        [HttpPut("Edit")]
-        [Authorize(Roles ="Admin")]
-        public async Task<IActionResult> EditInsight([FromForm]EditInsightDto dto)
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit([FromForm] EditInsightDto dto)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
             var fileExtension = Path.GetExtension(dto.InsightImage.FileName).ToLowerInvariant();
@@ -91,7 +88,7 @@ namespace Precision_Engineering.Api.Controllers
                 });
             }
             var isedited = await insightsServise.EditInsight(dto.Id, dto.Title, dto.Description, dto.InsightImage, dto.ReadTimeInMinut, dto.Category);
-            if(!isedited)
+            if (!isedited)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
@@ -102,7 +99,28 @@ namespace Precision_Engineering.Api.Controllers
             {
                 message = $"Insight with id {dto.Id} edited successfully."
             });
-            
+
+        }
+        public bool CheckIamgeformat(IFormFile image)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var fileExtension = Path.GetExtension(image.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                return false;
+
+            }
+
+            return true;
+        }
+        public bool CheckIamgeSize(IFormFile image)
+        {
+            if (image.Length > 5 * 1024 * 1024)
+            {
+                return false;
+
+            }
+            return true;
         }
 
 

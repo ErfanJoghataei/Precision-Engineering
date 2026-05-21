@@ -44,9 +44,7 @@ namespace Precision_Engineering.Bll.Jwt_Token
                 expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(info["ExpireMinutes"])),
                     signingCredentials: creadintials
                 );
-            var admin = await dbContext.Admins.Where(c=>c.UserName == username).FirstOrDefaultAsync();
-            admin.LastLoginAt = DateTime.UtcNow;
-            await  dbContext.SaveChangesAsync();
+
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

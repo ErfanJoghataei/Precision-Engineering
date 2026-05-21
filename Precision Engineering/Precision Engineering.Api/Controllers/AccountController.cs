@@ -22,24 +22,27 @@ namespace Precision_Engineering.Api.Controllers
             this.jwtServise = jwtServise;
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginDto dto)
+        public async Task<IActionResult> LoginAdmin(LoginDto dto)
         {
             var admin = await dbContext.Admins.Where(c => c.UserName == dto.UserName).FirstOrDefaultAsync();
             if (admin == null)
             {
                 return Unauthorized(new { message = $"Admin With UserName:{dto.UserName} Doesnt Exist" });
             }
-          
+
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, admin.PasswordHash))
             {
                 return BadRequest(new { message = "UesrName or Password is incorrect" });
             }
             var token = jwtServise.CreateToken(admin.Id.ToString(), admin.UserName, "Admin");
+            admin.LastLoginAt = DateTime.UtcNow;
+            await dbContext.SaveChangesAsync();
             return Ok(new
             {
                 message = "Admin Logined successfully",
                 accessToken = token
             });
         }
+
     }
 }
