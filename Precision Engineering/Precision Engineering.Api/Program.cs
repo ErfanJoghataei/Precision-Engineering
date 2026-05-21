@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Precision_Engineering.BusinessLogic.Insight;
-using Precision_Engineering.BusinessLogic.Jwt_Token;
+using Precision_Engineering.Bll.Insight;
+using Precision_Engineering.Bll.Jwt_Token;
 using Precision_Engineering.DAL.Contexts;
 using System.Text;
 

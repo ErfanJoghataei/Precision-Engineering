@@ -25,8 +25,8 @@ namespace Precision_Engineering.Api.Controllers
         public async Task<IActionResult> CreateInsight(CreateInsightDto dto)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
-            var fileextention = Path.GetExtension(dto.InsightImage.FileName).ToLowerInvariant();
-            if (!allowedExtensions.Contains(fileextention))
+            var fileExtension = Path.GetExtension(dto.InsightImage.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(fileExtension))
             {
                 return BadRequest(new
                 {
@@ -36,7 +36,10 @@ namespace Precision_Engineering.Api.Controllers
             }
             if (dto.InsightImage.Length > 5 * 1024 * 1024)
             {
-
+                return BadRequest(new
+                {
+                    message = "Image size must be less than 5 MB"
+                });
             }
             var issuccsec = await insightsServise.CreateInsight(dto.Title, dto.Description, dto.InsightImage, dto.ReadTimeInMinutes, dto.Category);
             if (!issuccsec)
@@ -64,6 +67,42 @@ namespace Precision_Engineering.Api.Controllers
             {
                 message = $"Insight with id : {id} removed successfuly"
             });
+        }
+
+        [HttpPut("Edit")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> EditInsight([FromForm]EditInsightDto dto)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var fileExtension = Path.GetExtension(dto.InsightImage.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                return BadRequest(new
+                {
+                    message = "Invalid ImageFormat"
+                });
+
+            }
+            if (dto.InsightImage.Length > 5 * 1024 * 1024)
+            {
+                return BadRequest(new
+                {
+                    message = "Image size must be less than 5 MB"
+                });
+            }
+            var isedited = await insightsServise.EditInsight(dto.Id, dto.Title, dto.Description, dto.InsightImage, dto.ReadTimeInMinut, dto.Category);
+            if(!isedited)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    message = "SomeThing went wrong"
+                });
+            }
+            return Ok(new
+            {
+                message = $"Insight with id {dto.Id} edited successfully."
+            });
+            
         }
 
 
