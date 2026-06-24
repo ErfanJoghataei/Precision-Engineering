@@ -18,6 +18,27 @@ namespace Precision_Engineering.Api.Controllers
             this.projectservice = projectservice;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var projects = await projectservice.GetProjects();
+            if (projects == null)
+            {
+                return StatusCode(500, new { message = "Something went wrong" });
+            }
+
+            var dto = projects.Select(c => new GetProjectDto
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                ImagePath = c.IamgeUrl,
+                Category = c.Category
+            }).ToList();
+
+            return Ok(dto);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromForm]CreateProjectDto dto)
         {
@@ -70,7 +91,7 @@ namespace Precision_Engineering.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(int id,EditProjectDto dto)
+        public async Task<IActionResult> Edit(int id, [FromForm] EditProjectDto dto)
         {
             if(!CheckImageSize(dto.newimage))
             {

@@ -4,6 +4,7 @@ namespace Precision_Engineering.Api.Dtos.ProjectDtos
 {
     public class GetProjectDto
     {
+        public int Id { get; set; }
         public string Title { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string ImagePath { get; set; } = default!;

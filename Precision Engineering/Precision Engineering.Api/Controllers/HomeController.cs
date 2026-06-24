@@ -36,23 +36,27 @@ namespace Precision_Engineering.Api.Controllers
 
             dto.Insights = insights.Select(c => new GetInsightDto
             {
+                Id = c.Id,
                 Title = c.Title,
                 Description = c.Description,
                 Category = c.Category,
-                ReadTime = $"{c.ReadTime} Min Read",        
+                ReadTime = c.ReadTime,
+                CreatedDate = c.CreatedAt,
                 ImagePath = c.ImagePath
             }).ToList();
 
             dto.Projects = projects.Select(c=> new GetProjectDto 
             { 
-            Title= c.Title,
-            Description = c.Description,
-            Category = c.Category,
-            ImagePath = c.IamgeUrl        
+                Id = c.Id,
+                Title= c.Title,
+                Description = c.Description,
+                Category = c.Category,
+                ImagePath = c.IamgeUrl        
             }).ToList();
 
             dto.Files = files.Select(c=> new GetFileDto 
             { 
+                Id = c.Id,
                 FileName = c.FileName,
                 Description = c.Description,
                 Format = c.Extension,

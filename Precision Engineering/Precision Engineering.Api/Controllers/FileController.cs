@@ -17,6 +17,29 @@ namespace Precision_Engineering.Api.Controllers
             this.fileServise = fileServise;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var files = await fileServise.GetFiles();
+            if (files == null)
+            {
+                return StatusCode(500, new { message = "Something went wrong" });
+            }
+
+            var dto = files.Select(c => new GetFileDto
+            {
+                Id = c.Id,
+                FileName = c.FileName,
+                Description = c.Description,
+                Format = c.Extension,
+                Size = c.Size,
+                UploadedAt = c.UploadedAt,
+                FilePath = c.FilePath
+            }).ToList();
+
+            return Ok(dto);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Upload([FromForm] UploadFileDto dto)
         {

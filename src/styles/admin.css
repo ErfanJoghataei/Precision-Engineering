@@ -796,6 +796,113 @@ textarea.form-control {
   color: white;
 }
 
+/* ===== FILE UPLOAD STYLES ===== */
+.upload-dropzone {
+  flex: 1;
+  min-height: 160px;
+  border: 2px dashed #d0d0d0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 20px;
+}
+
+.upload-dropzone:hover {
+  border-color: #6c5ce7;
+  background: rgba(108, 92, 231, 0.03);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  text-align: center;
+}
+
+.upload-placeholder svg {
+  color: #6c5ce7;
+  opacity: 0.6;
+}
+
+.upload-hint {
+  font-size: 0.8rem;
+  color: #bbb;
+}
+
+.upload-file-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #333;
+  text-align: center;
+}
+
+.upload-file-info svg {
+  color: #6c5ce7;
+}
+
+.upload-file-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.upload-file-size {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.upload-form-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.upload-form-fields .form-group {
+  margin-bottom: 0;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+}
+
+.upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.upload-status {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.upload-success {
+  background: rgba(0, 184, 148, 0.1);
+  color: #00b894;
+  border: 1px solid rgba(0, 184, 148, 0.2);
+}
+
+.upload-error {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.2);
+}
+
 /* CKEditor Customization */
 .ck-editor__editable {
   min-height: 200px;

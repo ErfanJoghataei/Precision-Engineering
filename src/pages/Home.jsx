@@ -1,9 +1,12 @@
 import React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Clock, FileText, Mail, MapPin, Phone, User } from "lucide-react";
-import { blogPosts, downloads, projects } from "../data/content.js";
 
-const categories = ["all", ...new Set(projects.map((project) => project.category))];
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
 
 const categoryName = (category) =>
   ({
@@ -23,11 +26,35 @@ const getCookie = (name) =>
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [homeData, setHomeData] = useState(null);
 
   useEffect(() => {
     const token = getCookie("admin_token") || localStorage.getItem("admin_token");
     setIsLoggedIn(Boolean(token));
   }, []);
+
+  const fetchHomeData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/Home");
+      if (res.ok) {
+        const data = await res.json();
+        setHomeData(data);
+      }
+    } catch {
+      // silently fail
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchHomeData();
+  }, [fetchHomeData]);
+
+  const insights = homeData?.insights ?? [];
+  const projects = homeData?.projects ?? [];
+  const files = homeData?.files ?? [];
+
+  const categories = useMemo(() => ["all", ...new Set(projects.map((p) => p.category))], [projects]);
+
   const [contactForm, setContactForm] = useState({
     fullName: "",
     email: "",
@@ -36,12 +63,13 @@ export default function Home() {
   const [contactErrors, setContactErrors] = useState({});
   const [contactStatus, setContactStatus] = useState({ type: "", message: "" });
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+
   const filteredProjects = useMemo(
     () =>
       activeCategory === "all"
         ? projects
         : projects.filter((project) => project.category === activeCategory),
-    [activeCategory]
+    [activeCategory, projects]
   );
 
   useEffect(() => {
@@ -165,16 +193,16 @@ export default function Home() {
           <h2 className="section-title">Latest Insights</h2>
           <p className="section-subtitle">Expert perspectives on engineering trends and innovations</p>
           <div className="blog-grid">
-            {blogPosts.map((post) => (
-              <article className="blog-card" key={post.id}>
-                <div className="blog-image" style={{ backgroundImage: `url("${post.imageUrl}")` }} />
+            {insights.map((insight) => (
+              <article className="blog-card" key={insight.id}>
+                <div className="blog-image" style={{ backgroundImage: `url("${insight.imagePath}")` }} />
                 <div className="blog-content">
-                  <span className="blog-category">{post.category}</span>
-                  <h3>{post.title}</h3>
-                  <p>{post.description}</p>
+                  <span className="blog-category">{insight.category}</span>
+                  <h3>{insight.title}</h3>
+                  <p>{insight.description}</p>
                   <div className="blog-meta">
-                    <span>{post.date}</span>
-                    <span>{post.readTime}</span>
+                    <span>{new Date(insight.createdDate).toLocaleDateString()}</span>
+                    <span>{insight.readTime}</span>
                   </div>
                 </div>
               </article>
@@ -219,15 +247,15 @@ export default function Home() {
           <h2 className="section-title">Download Center</h2>
           <p className="section-subtitle">Access our technical resources and documentation</p>
           <div className="downloads-grid">
-            {downloads.map(([title, description, meta]) => (
-              <div className="download-item" key={title}>
+            {files.map((file) => (
+              <div className="download-item" key={file.id}>
                 <div className="download-icon"><FileText size={48} /></div>
                 <div className="download-content">
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                  <span className="download-meta">{meta}</span>
+                  <h3>{file.fileName}</h3>
+                  <p>{file.description || ""}</p>
+                  <span className="download-meta">PDF - {formatFileSize(file.size)}</span>
                 </div>
-                <a href="#downloads" className="btn-download">Download</a>
+                <a href={file.filePath} className="btn-download" target="_blank" rel="noopener noreferrer">Download</a>
               </div>
             ))}
           </div>

@@ -20,6 +20,29 @@ namespace Precision_Engineering.Api.Controllers
             this.insightsServise = insightsServise;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var insights = await insightsServise.GetInsights();
+            if (insights == null)
+            {
+                return StatusCode(500, new { message = "Something went wrong" });
+            }
+
+            var dto = insights.Select(c => new GetInsightDto
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                ImagePath = c.ImagePath,
+                Category = c.Category,
+                CreatedDate = c.CreatedAt,
+                ReadTime = c.ReadTime
+            }).ToList();
+
+            return Ok(dto);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateInsightDto dto)

@@ -20,18 +20,10 @@ namespace Precision_Engineering.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var insights = await dbContext.Insights.ToListAsync();
-            var insightscount = insights.Count();
-
-            var projects = await dbContext.Insights.ToListAsync();
-            var projectscount = insights.Count();
-
-            var downloads = await dbContext.Insights.ToListAsync();
-            var downloadscount = insights.Count();
-
-            var messages = await dbContext.Insights.ToListAsync();
-            var messagescount = insights.Count();
-
+            var insightscount = await dbContext.Insights.CountAsync();
+            var projectscount = await dbContext.Projects.CountAsync();
+            var downloadscount = await dbContext.Files.CountAsync();
+            var messagescount = await dbContext.Messages.CountAsync();
 
             var model = new GetDashboardDto
             {
