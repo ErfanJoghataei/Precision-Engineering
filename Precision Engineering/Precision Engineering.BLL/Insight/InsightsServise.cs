@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-
+using Microsoft.EntityFrameworkCore;
 using Precision_Engineering.DAL.Contexts;
 using Precision_Engineering.DAL.Entities;
 using System;
@@ -84,6 +84,22 @@ public class InsightsServise : IInsightsServise
             return true;
         }
         catch { return false; }
+    }
+
+    public async Task<List<Insights>> GetInsights()
+    {
+        try
+        {
+            var insights = await dbContext.Insights.ToListAsync();
+
+            return insights;
+        }
+        catch
+        {
+            return null;
+        }
+
+
     }
 
     public Task<Insights> GetInsightWithId(int id)

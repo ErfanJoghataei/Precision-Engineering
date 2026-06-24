@@ -64,6 +64,31 @@
     color: #0078d4;
   }
   
+  .nav-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-profile-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0078d4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+  
+  .nav-profile-btn:hover .nav-profile-icon {
+    background: #005a9e;
+  }
+  
   /* Hero Section */
   .hero {
     position: relative;

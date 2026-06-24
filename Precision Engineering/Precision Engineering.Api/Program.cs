@@ -64,6 +64,31 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Seed admin user (remove after first run)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PrecisionEngineeringDbContext>();
+    var existingAdmin = db.Admins.FirstOrDefault();
+    if (existingAdmin != null)
+    {
+        existingAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123");
+        existingAdmin.IsActive = true;
+        Console.WriteLine("Updated existing admin password to: admin123");
+    }
+    else
+    {
+        db.Admins.Add(new Precision_Engineering.DAL.Entities.Admin
+        {
+            UserName = "admin",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true
+        });
+        Console.WriteLine("Admin user created: username=admin, password=admin123");
+    }
+    await db.SaveChangesAsync();
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 

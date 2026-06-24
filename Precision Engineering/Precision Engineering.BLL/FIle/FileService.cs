@@ -88,6 +88,20 @@ namespace Precision_Engineering.BusinessLogic.FIle
 
         }
 
+        public async Task<List<Files>> GetFiles()
+        {
+           try
+            {
+                var files = await dbContext.Files.ToListAsync();
+                return files;
+            }
+            catch
+            {
+                return null;
+               
+            }
+        }
+
         public async Task<ServiseResult> RemoveFile(int id)
         {
             try

@@ -12,5 +12,7 @@ namespace Precision_Engineering.BusinessLogic.Project
         Task<bool> RemoveProject(int id);
         Task<bool> EditProject(int id, string newtitle, string newdescription, IFormFile newimage, ProjectsCategory newcategory);
 
+        Task<List<Projects>> GetProjects();
+
     }
 }

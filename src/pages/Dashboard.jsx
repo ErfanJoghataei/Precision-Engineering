@@ -87,7 +87,12 @@ export default function Dashboard() {
           <NavItem icon={<Mail />} page="messages" activePage={activePage} onClick={openPage} badge="3" />
           <NavItem icon={<Settings />} page="settings" activePage={activePage} onClick={openPage} />
           <div className="sidebar-footer">
-            <a href="/" className="nav-item">View Site</a>
+            <button className="nav-item" onClick={() => {
+              window.history.pushState({}, "", "/");
+              window.dispatchEvent(new Event("precision:navigate"));
+            }} type="button">
+              View Site
+            </button>
             <button className="nav-item logout-btn" onClick={logout} type="button">
               <LogOut size={18} /> Logout
             </button>

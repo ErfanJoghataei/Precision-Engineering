@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Precision_Engineering.DAL.Contexts;
 
@@ -11,9 +12,11 @@ using Precision_Engineering.DAL.Contexts;
 namespace Precision_Engineering.DAL.Migrations
 {
     [DbContext(typeof(PrecisionEngineeringDbContext))]
-    partial class PrecisionEngineeringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260624061008_update-file")]
+    partial class updatefile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

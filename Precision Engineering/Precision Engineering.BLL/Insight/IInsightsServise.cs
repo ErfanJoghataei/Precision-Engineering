@@ -13,5 +13,7 @@ namespace Precision_Engineering.Bll.Insight
         Task<Insights> GetInsightWithId(int id);
 
         Task<bool> EditInsight(int id,string newtitle, string newdescription, IFormFile newinsightimage, int newraedtime, InsightsCategory newinsightsCategory);
+
+        Task<List<Insights>> GetInsights();
     }
 }

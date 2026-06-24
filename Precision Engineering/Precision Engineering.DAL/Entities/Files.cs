@@ -31,7 +31,10 @@ namespace Precision_Engineering.DAL.Entities
 
      
             public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
-        
+
+
+        public int DownloadCount { get; set; }
+
 
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Precision_Engineering.Api.Dtos.FileDtos;
 using Precision_Engineering.BusinessLogic.FIle;
+using Precision_Engineering.DAL.Contexts;
 
 namespace Precision_Engineering.Api.Controllers
 {
@@ -103,6 +104,19 @@ namespace Precision_Engineering.Api.Controllers
                 message = resutl.Message
             });
         }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> AddDownloadCount(int id,PrecisionEngineeringDbContext dbContext)
+        {
+            var file = await dbContext.Files.FindAsync(id);
+            file.DownloadCount++;
+            await dbContext.SaveChangesAsync();
+            return Ok(new
+            {
+                message = "Download count added Succesfully"
+            });
+        }
+
 
         public bool CheckFileformat(IFormFile image)
         {

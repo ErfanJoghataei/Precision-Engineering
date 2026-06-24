@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useMemo, useState } from "react";
-import { Clock, FileText, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, FileText, Mail, MapPin, Phone, User } from "lucide-react";
 import { blogPosts, downloads, projects } from "../data/content.js";
 
 const categories = ["all", ...new Set(projects.map((project) => project.category))];
@@ -14,8 +14,20 @@ const categoryName = (category) =>
     transportation: "Transportation"
   })[category] || category;
 
+const getCookie = (name) =>
+  document.cookie.split("; ").reduce((result, cookie) => {
+    const [key, value] = cookie.split("=");
+    return key === name ? decodeURIComponent(value) : result;
+  }, "");
+
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
+
+  useEffect(() => {
+    const token = getCookie("admin_token") || localStorage.getItem("admin_token");
+    setIsLoggedIn(Boolean(token));
+  }, []);
   const [contactForm, setContactForm] = useState({
     fullName: "",
     email: "",
@@ -123,7 +135,16 @@ export default function Home() {
             <li><a href="#projects">Projects</a></li>
             <li><a href="#downloads">Downloads</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li><a href="/login">Admin</a></li>
+            <li>
+              {isLoggedIn ? (
+                <a href="/dashboard" className="nav-profile-btn">
+                  <span className="nav-profile-icon"><User size={16} /></span>
+                  Profile
+                </a>
+              ) : (
+                <a href="/login">Admin</a>
+              )}
+            </li>
           </ul>
         </div>
       </nav>

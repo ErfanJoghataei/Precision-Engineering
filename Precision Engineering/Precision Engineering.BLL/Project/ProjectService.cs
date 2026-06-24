@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Precision_Engineering.DAL.Contexts;
 using Precision_Engineering.DAL.Entities;
 using System;
@@ -98,6 +99,19 @@ namespace Precision_Engineering.BusinessLogic.Project
 
 
 
+        }
+
+        public async Task<List<Projects>> GetProjects()
+        {
+            try
+            {
+                var projects = await dbContext.Projects.ToListAsync();
+                return projects;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<bool> RemoveProject(int id)

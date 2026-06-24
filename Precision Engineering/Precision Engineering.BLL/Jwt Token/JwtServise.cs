@@ -25,7 +25,7 @@ namespace Precision_Engineering.Bll.Jwt_Token
         {
             var info = configuration.GetSection("Jwt");
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes( info.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(info["Key"]));
 
             var creadintials = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
 
