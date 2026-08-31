@@ -1,23 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Precision_Engineering.DAL.Contexts
+namespace Precision_Engineering.DAL.Contexts;
+
+public sealed class PrecisionEngineeringDbContextFactory
+    : IDesignTimeDbContextFactory<PrecisionEngineeringDbContext>
 {
-    public class PrecisionEngineeringDbContextFactory
-        : IDesignTimeDbContextFactory<PrecisionEngineeringDbContext>
+    public PrecisionEngineeringDbContext CreateDbContext(string[] args)
     {
-        public PrecisionEngineeringDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder =
-                new DbContextOptionsBuilder<PrecisionEngineeringDbContext>();
+        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__cnnstring")
+            ?? "Server=(localdb)\\MSSQLLocalDB;Database=PrecisionEngineering;Trusted_Connection=True;TrustServerCertificate=True";
 
-            optionsBuilder.UseSqlServer(
-                "Server=.;Database=PrecisionEngineeringDb;Trusted_Connection=True;TrustServerCertificate=True");
+        var optionsBuilder = new DbContextOptionsBuilder<PrecisionEngineeringDbContext>();
+        optionsBuilder.UseSqlServer(connectionString);
 
-            return new PrecisionEngineeringDbContext(optionsBuilder.Options);
-        }
+        return new PrecisionEngineeringDbContext(optionsBuilder.Options);
     }
 }
+

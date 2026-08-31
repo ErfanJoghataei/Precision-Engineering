@@ -50,7 +50,7 @@ export default function Home() {
   }, [fetchHomeData]);
 
   const insights = homeData?.insights ?? [];
-  const projects = homeData?.projects ?? [];
+  const projects = useMemo(() => homeData?.projects ?? [], [homeData]);
   const files = homeData?.files ?? [];
 
   const categories = useMemo(() => ["all", ...new Set(projects.map((p) => p.category))], [projects]);

@@ -1,43 +1,83 @@
-# ⚙️ Precision Engineering Platform
+# Precision Engineering Platform
 
-[![.NET Version](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/)
-[![Frontend](https://img.shields.io/badge/Frontend-React-blue.svg)](https://react.dev/)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-emerald.svg)]()
+A full-stack portfolio project with a React/Vite frontend and an ASP.NET Core API for managing engineering projects, insights, files, messages, and administrator access.
 
-A robust, enterprise-grade Full-Stack web application designed for engineering management and e-commerce. Built with **ASP.NET Core** on the backend and **React** on the frontend, the project strictly follows **Clean Architecture (Layered Architecture)** principles to ensure high maintainability, decoupling, and scalability.
+## Current stack
 
----
+- React 19 and Vite 7
+- ASP.NET Core on .NET 10
+- Entity Framework Core 10 with SQL Server
+- JWT authentication and BCrypt password hashing
+- A three-project backend: API, business logic, and data access
 
-## 🏗️ Architecture & Project Structure
+## Repository structure
 
-The solution is divided into highly decoupled layers, preventing database leakage into business logic:
+```text
+src/                                      React application
+Public/                                   Static frontend assets
+Precision Engineering/
+  Precision Engineering.Api/             Controllers, DTOs, startup configuration
+  Precision Engineering.BLL/             Application services and JWT handling
+  Precision Engineering.DAL/             EF Core context, entities, and migrations
+```
 
-* **`Precision.Domain`:** The innermost layer containing core business entities, value objects, and repository contracts. It has zero external dependencies.
-* **`Precision.Application`:** Implements application use cases, business services, mapping, and DTOs.
-* **`Precision.Infrastructure`:** Handles data persistence via **Entity Framework Core**, database migrations, and external service integrations.
-* **`Precision.EndPoint`:** The presentation layer containing the backend API endpoints and the **React** single-page application (SPA) integration.
+The project uses a traditional layered architecture. The API references the business-logic and data-access projects, while the BLL contains application services for projects, insights, files, and authentication.
 
----
+## Main capabilities
 
-## ✨ Tech Stack
+- Public home content and engineering project listings
+- Project and insight management
+- File upload and management endpoints
+- Contact-message submission and dashboard views
+- JWT-based administrator authentication
 
-* **Backend:** ASP.NET Core (.NET 8.0)
-* **Database & ORM:** Entity Framework Core with SQL Server / LocalDB
-* **Frontend:** React (JavaScript/HTML/CSS)
-* **Pattern & Practices:** Clean Architecture, Dependency Injection, Repository Pattern
+## Local setup
 
----
+Requirements: .NET 10 SDK, Node.js, and SQL Server or LocalDB.
 
-## 🏁 Getting Started
+```bash
+git clone https://github.com/ErfanJoghataei/Precision-Engineering.git
+cd Precision-Engineering
+npm install
+```
 
-### Prerequisites
-* [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
-* [Node.js](https://nodejs.org/) (for running the React frontend)
-* SQL Server or LocalDB
+Copy the backend configuration template and provide development-only values:
 
-### Installation Steps
+```powershell
+Copy-Item "Precision Engineering/Precision Engineering.Api/appsettings.example.json" `
+  "Precision Engineering/Precision Engineering.Api/appsettings.json"
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/ErfanJoghataei/Pricision-Engineering.git](https://github.com/ErfanJoghataei/Pricision-Engineering.git)
-   cd Pricision-Engineering
+Prefer .NET User Secrets or environment variables for sensitive values. For example:
+
+```text
+ConnectionStrings__cnnstring
+Jwt__Key
+Jwt__Issuer
+Jwt__Audience
+```
+
+Run the backend and frontend in separate terminals:
+
+```bash
+dotnet run --project "Precision Engineering/Precision Engineering.Api/Precision Engineering.Api.csproj"
+npm run dev
+```
+
+## Verification
+
+```bash
+dotnet build "Precision Engineering/Precision Engineering.slnx"
+npm run lint
+npm run build
+```
+
+## Roadmap
+
+- Add unit and integration tests
+- Add CI for frontend and backend builds
+- Publish screenshots and a hosted demo
+- Improve API documentation and validation responses
+
+This repository is a personal learning and portfolio project, not a production service.
+

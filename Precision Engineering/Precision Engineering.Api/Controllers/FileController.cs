@@ -30,7 +30,7 @@ namespace Precision_Engineering.Api.Controllers
             {
                 Id = c.Id,
                 FileName = c.FileName,
-                Description = c.Description,
+                Description = c.Description ?? string.Empty,
                 Format = c.Extension,
                 Size = c.Size,
                 UploadedAt = c.UploadedAt,
@@ -132,6 +132,11 @@ namespace Precision_Engineering.Api.Controllers
         public async Task<IActionResult> AddDownloadCount(int id,PrecisionEngineeringDbContext dbContext)
         {
             var file = await dbContext.Files.FindAsync(id);
+            if (file is null)
+            {
+                return NotFound(new { message = "File not found" });
+            }
+
             file.DownloadCount++;
             await dbContext.SaveChangesAsync();
             return Ok(new

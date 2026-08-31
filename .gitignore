@@ -49,6 +49,7 @@ x86/
 
 # ASP.NET local secrets and generated files
 secrets.json
+appsettings.json
 appsettings.Local.json
 appsettings.*.Local.json
 Generated Files/

@@ -38,7 +38,7 @@ namespace Precision_Engineering.Api.Controllers
             {
                 Id = c.Id,
                 Title = c.Title,
-                Description = c.Description,
+                Description = c.Description ?? string.Empty,
                 Category = c.Category,
                 ReadTime = c.ReadTime,
                 CreatedDate = c.CreatedAt,
@@ -49,7 +49,7 @@ namespace Precision_Engineering.Api.Controllers
             { 
                 Id = c.Id,
                 Title= c.Title,
-                Description = c.Description,
+                Description = c.Description ?? string.Empty,
                 Category = c.Category,
                 ImagePath = c.IamgeUrl        
             }).ToList();
@@ -58,7 +58,7 @@ namespace Precision_Engineering.Api.Controllers
             { 
                 Id = c.Id,
                 FileName = c.FileName,
-                Description = c.Description,
+                Description = c.Description ?? string.Empty,
                 Format = c.Extension,
                 FilePath = c.FilePath,
                 Size = c.Size,
