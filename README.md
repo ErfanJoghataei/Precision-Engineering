@@ -2,6 +2,8 @@
 
 A full-stack portfolio project with a React/Vite frontend and an ASP.NET Core API for managing engineering projects, insights, files, messages, and administrator access.
 
+The public React page includes three complete engineering insights, additional example projects, and three downloadable resources. On GitHub Pages, the static frontend uses these examples and opens project inquiries in the visitor's email app.
+
 ## Current stack
 
 - React 19 and Vite 7

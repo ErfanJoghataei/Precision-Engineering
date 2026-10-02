@@ -108,7 +108,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("/images/Need-Code-By-PCbots.png");
+    background-image: url("../../Public/images/bridge.jpg");
     background-size: cover;
     background-position: center;
     opacity: 0.1;
@@ -261,6 +261,15 @@
     font-size: 0.875rem;
     color: #999;
   }
+  .blog-read-link {
+    display: inline-block;
+    margin: 0 0 1rem;
+    color: #0066b3;
+    font-size: .9rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .blog-read-link:hover { text-decoration: underline; }
   
   /* Projects Section */
   .filter-bar {

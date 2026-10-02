@@ -1,11 +1,11 @@
-namespace Precision_Engineering.Api.Dtos.MessageDtos;
-
-public sealed class GetMessageDto
+namespace Precision_Engineering.Api.Dtos.MessageDtos
 {
-    public int Id { get; set; }
-    public string FullName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string MessageText { get; set; } = string.Empty;
-    public DateTime SentAt { get; set; }
+    public class GetMessageDto
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; } = default!;
+        public string Email { get; set; } = default!;
+        public string MessageText { get; set; } = default!;
+        public DateTime SentAt { get; set; }
+    }
 }
-

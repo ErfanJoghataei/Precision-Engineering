@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  publicDir: "Public",
+  base: process.env.GITHUB_PAGES === "true" ? "/Precision-Engineering/" : "/",
   server: {
     proxy: {
       "/api": {

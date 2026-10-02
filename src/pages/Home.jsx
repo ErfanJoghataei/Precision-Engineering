@@ -1,6 +1,7 @@
 import React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Clock, FileText, Mail, MapPin, Phone, User } from "lucide-react";
+import { FileText, Mail, User } from "lucide-react";
+import { blogPosts, projects as sampleProjects, downloads as sampleDownloads } from "../data/content.js";
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + " B";
@@ -24,6 +25,7 @@ const getCookie = (name) =>
   }, "");
 
 export default function Home() {
+  const staticDemo = import.meta.env.BASE_URL !== "/";
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [homeData, setHomeData] = useState(null);
@@ -34,6 +36,7 @@ export default function Home() {
   }, []);
 
   const fetchHomeData = useCallback(async () => {
+    if (staticDemo) return;
     try {
       const res = await fetch("/api/Home");
       if (res.ok) {
@@ -43,15 +46,15 @@ export default function Home() {
     } catch {
       // silently fail
     }
-  }, []);
+  }, [staticDemo]);
 
   useEffect(() => {
     fetchHomeData();
   }, [fetchHomeData]);
 
-  const insights = homeData?.insights ?? [];
-  const projects = useMemo(() => homeData?.projects ?? [], [homeData]);
-  const files = homeData?.files ?? [];
+  const insights = homeData?.insights?.length ? homeData.insights : blogPosts;
+  const projects = homeData?.projects?.length ? homeData.projects : sampleProjects;
+  const files = homeData?.files?.length ? homeData.files : sampleDownloads;
 
   const categories = useMemo(() => ["all", ...new Set(projects.map((p) => p.category))], [projects]);
 
@@ -120,6 +123,14 @@ export default function Home() {
       return;
     }
 
+    if (staticDemo) {
+      const subject = encodeURIComponent("Project inquiry from Precision Engineering portfolio");
+      const body = encodeURIComponent(`${contactForm.messageText.trim()}\n\nFrom: ${contactForm.fullName.trim()} (${contactForm.email.trim()})`);
+      window.location.href = `mailto:erfan.joghataei2020@gmail.com?subject=${subject}&body=${body}`;
+      setContactStatus({ type: "success", message: "Your email app is opening with the message ready to send." });
+      return;
+    }
+
     setIsSendingMessage(true);
     setContactStatus({ type: "", message: "" });
 
@@ -163,7 +174,7 @@ export default function Home() {
             <li><a href="#projects">Projects</a></li>
             <li><a href="#downloads">Downloads</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li>
+            {!staticDemo && <li>
               {isLoggedIn ? (
                 <a href="/dashboard" className="nav-profile-btn">
                   <span className="nav-profile-icon"><User size={16} /></span>
@@ -172,7 +183,7 @@ export default function Home() {
               ) : (
                 <a href="/login">Admin</a>
               )}
-            </li>
+            </li>}
           </ul>
         </div>
       </nav>
@@ -195,13 +206,14 @@ export default function Home() {
           <div className="blog-grid">
             {insights.map((insight) => (
               <article className="blog-card" key={insight.id}>
-                <div className="blog-image" style={{ backgroundImage: `url("${insight.imagePath}")` }} />
+                <div className="blog-image" style={{ backgroundImage: `url("${insight.imagePath || insight.imageUrl}")` }} />
                 <div className="blog-content">
                   <span className="blog-category">{insight.category}</span>
                   <h3>{insight.title}</h3>
                   <p>{insight.description}</p>
+                  {insight.articleUrl && <a className="blog-read-link" href={insight.articleUrl} target="_blank" rel="noopener noreferrer">Read insight →</a>}
                   <div className="blog-meta">
-                    <span>{new Date(insight.createdDate).toLocaleDateString()}</span>
+                    <span>{insight.createdDate ? new Date(insight.createdDate).toLocaleDateString() : insight.date}</span>
                     <span>{insight.readTime}</span>
                   </div>
                 </div>
@@ -253,7 +265,7 @@ export default function Home() {
                 <div className="download-content">
                   <h3>{file.fileName}</h3>
                   <p>{file.description || ""}</p>
-                  <span className="download-meta">PDF - {formatFileSize(file.size)}</span>
+                  <span className="download-meta">{file.fileType || "PDF"} · {file.size ? formatFileSize(file.size) : "Resource"}</span>
                 </div>
                 <a href={file.filePath} className="btn-download" target="_blank" rel="noopener noreferrer">Download</a>
               </div>
@@ -324,10 +336,8 @@ export default function Home() {
             </form>
 
             <div className="contact-info">
-              <Info icon={<MapPin />} title="Office Location">123 Engineering Plaza<br />Suite 400<br />Metro City, ST 12345</Info>
-              <Info icon={<Phone />} title="Phone">Main: (555) 123-4567<br />Fax: (555) 123-4568</Info>
-              <Info icon={<Mail />} title="Email">info@precisioneng.com<br />careers@precisioneng.com</Info>
-              <Info icon={<Clock />} title="Business Hours">Monday - Friday: 8:00 AM - 6:00 PM<br />Saturday: 9:00 AM - 1:00 PM</Info>
+              <Info icon={<Mail />} title="Project inquiries">Use the form to describe your project and the support you need.</Info>
+              <Info icon={<FileText />} title="Helpful details">Include the site, project stage, timeline, and any drawings you can share.</Info>
             </div>
           </div>
         </div>
@@ -340,12 +350,11 @@ export default function Home() {
               <h3>Precision Engineering</h3>
               <p>Leading the way in innovative consulting engineering solutions for over 25 years.</p>
             </div>
-            <FooterList title="Services" items={["Structural Engineering", "Infrastructure Design", "Environmental Solutions", "Transportation Planning"]} />
-            <FooterList title="Company" items={["About Us", "Careers", "Certifications", "Partners"]} />
-            <FooterList title="Resources" items={["Blog", "Downloads", "FAQ", "Privacy Policy"]} />
+            <FooterList title="Services" items={[{ label: "Structural Engineering", href: "#projects" }, { label: "Infrastructure Design", href: "#projects" }, { label: "Environmental Solutions", href: "#projects" }, { label: "Transportation Planning", href: "#projects" }]} />
+            <FooterList title="Explore" items={[{ label: "Projects", href: "#projects" }, { label: "Insights", href: "#blog" }, { label: "Downloads", href: "#downloads" }, { label: "Contact", href: "#contact" }]} />
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2025 Precision Engineering Solutions. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Precision Engineering Solutions. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -371,7 +380,7 @@ function FooterList({ title, items }) {
       <h4>{title}</h4>
       <ul>
         {items.map((item) => (
-          <li key={item}><a href="#home">{item}</a></li>
+          <li key={item.label}><a href={item.href}>{item.label}</a></li>
         ))}
       </ul>
     </div>
